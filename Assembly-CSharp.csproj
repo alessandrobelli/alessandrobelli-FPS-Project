@@ -45,6 +45,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Look.cs" />
      <Compile Include="Assets\Scripts\Motion.cs" />
  <Reference Include="UnityEngine">
  <HintPath>E:/Programs/Unity/2019.3.7f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

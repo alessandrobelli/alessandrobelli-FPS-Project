@@ -21,10 +21,11 @@ namespace Com.Nudi.Fpsproject
         // Update is called once per frame
         void FixedUpdate()
         {
-            float t_hmove = Input.GetAxis("Horizontal");
-            float t_vmove = Input.GetAxis("Vertical");
+             float t_vmove = Input.GetAxisRaw("Vertical");
+            float t_hmove = Input.GetAxisRaw("Horizontal");
+           
 
-            Vector2 t_direction = new Vector3(t_hmove, 0, t_vmove);
+            Vector3 t_direction = new Vector3(t_hmove, 0,  t_vmove);
             t_direction.Normalize();
 
             rig.velocity = transform.TransformDirection(t_direction) * speed * Time.fixedDeltaTime;
