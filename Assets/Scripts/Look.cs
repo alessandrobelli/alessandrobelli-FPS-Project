@@ -34,7 +34,7 @@ namespace Com.Nudi.Fpsproject
 
         void SetY()
         {
-            float t_input = Input.GetAxis("Mouse Y") * ySensitivy * Time.deltaTime;
+            float t_input = Input.GetAxisRaw("Mouse Y") * ySensitivy * Time.deltaTime;
             Quaternion t_adj = Quaternion.AngleAxis(t_input, -Vector3.right);
             Quaternion t_delta = cams.localRotation * t_adj;
 
@@ -48,7 +48,7 @@ namespace Com.Nudi.Fpsproject
 
         void SetX()
         {
-            float t_input = Input.GetAxis("Mouse X") * xSensitivy * Time.deltaTime;
+            float t_input = Input.GetAxisRaw("Mouse X") * xSensitivy * Time.deltaTime;
             Quaternion t_adj = Quaternion.AngleAxis(t_input, Vector3.up);
             Quaternion t_delta = player.localRotation * t_adj;
             player.localRotation = t_delta;
