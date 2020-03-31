@@ -11,6 +11,7 @@ namespace Com.Nudi.Fpsproject
 
         public Transform player;
         public Transform cams;
+        public Transform weapon;
         public float xSensitivy;
         public float ySensitivy;
         public float maxAngle = 60;
@@ -43,6 +44,8 @@ namespace Com.Nudi.Fpsproject
             {
                 cams.localRotation = t_delta;
             }
+
+            weapon.rotation = cams.rotation;
 
         }
 
