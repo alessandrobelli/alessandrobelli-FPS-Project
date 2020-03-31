@@ -7,6 +7,8 @@ namespace Com.Nudi.Fpsproject
 {
     public class Look : MonoBehaviour
     {
+        #region Variables
+
         public static bool cursorLocked = true;
 
         public Transform player;
@@ -16,6 +18,11 @@ namespace Com.Nudi.Fpsproject
         public float ySensitivy;
         public float maxAngle = 60;
         private Quaternion camCenter;
+
+        #endregion
+
+        #region Monobehavior callbacks
+
 
         // Start is called before the first frame update
         void Start()
@@ -32,6 +39,10 @@ namespace Com.Nudi.Fpsproject
             SetX();
             UpdateCursorLock();
         }
+
+        #endregion
+
+        #region Private methods
 
         void SetY()
         {
@@ -85,6 +96,9 @@ namespace Com.Nudi.Fpsproject
             }
 
         }
+
+        #endregion
+
 
     }
 }

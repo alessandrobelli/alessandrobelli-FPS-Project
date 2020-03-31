@@ -6,10 +6,13 @@ namespace Com.Nudi.Fpsproject
 {
     public class Weapon : MonoBehaviour
     {
+        #region Variables
         public Gun[] loadout;
         public Transform weaponParent;
         private GameObject currentWeapon;
+        #endregion
 
+        #region Monobehavior callbacks
         // Start is called before the first frame update
         void Start()
         {
@@ -22,6 +25,10 @@ namespace Com.Nudi.Fpsproject
             if (Input.GetKeyDown(KeyCode.Alpha1)) equip(0);
         }
 
+        #endregion
+
+
+        #region Private methods
         void equip(int p_ind)
         {
             if (currentWeapon != null) Destroy(currentWeapon);
@@ -35,5 +42,6 @@ namespace Com.Nudi.Fpsproject
             currentWeapon = t_newWeapon;
 
         }
+        #endregion
     }
 }
