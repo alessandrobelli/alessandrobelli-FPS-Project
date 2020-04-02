@@ -74,7 +74,7 @@ namespace Com.Nudi.Fpsproject
             // movement
             Vector3 t_direction = new Vector3(t_hmove, 0, t_vmove);
             t_direction.Normalize();
-            
+
 
 
             // FOV
@@ -88,7 +88,7 @@ namespace Com.Nudi.Fpsproject
                 normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV, Time.deltaTime * 8f);
 
             }
-            
+
             Vector3 t_targetVelocity = transform.TransformDirection(t_direction) * t_adjustedSpeed * Time.fixedDeltaTime;
             t_targetVelocity.y = rig.velocity.y;
             rig.velocity = t_targetVelocity;

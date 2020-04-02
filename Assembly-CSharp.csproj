@@ -48,6 +48,7 @@
      <Compile Include="Assets\Scripts\Look.cs" />
      <Compile Include="Assets\Scripts\Motion.cs" />
      <Compile Include="Assets\Scripts\Scriptable Objects Generators\Gun.cs" />
+     <Compile Include="Assets\Scripts\Sway.cs" />
      <Compile Include="Assets\Scripts\Weapon.cs" />
  <Reference Include="UnityEngine">
  <HintPath>E:/Programs/Unity/2019.3.7f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
