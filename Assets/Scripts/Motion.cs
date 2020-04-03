@@ -12,9 +12,14 @@ namespace Com.Nudi.Fpsproject
         public float speed;
         public float sprintModifier;
         public Camera normalCam;
+        public Transform weaponParent;
         public Transform groundDetector;
+        private Vector3 targetWeaponBobPosition;
         public LayerMask ground;
         private Rigidbody rig;
+        private float movementCounter;
+        private float idleCounter;
+        private Vector3 weaponParentOrigin;
         private float baseFOV;
         private float sprintFOVModifier = 1.5f;
         public float jumpForce;
@@ -27,6 +32,7 @@ namespace Com.Nudi.Fpsproject
             baseFOV = normalCam.fieldOfView;
             Camera.main.enabled = false;
             rig = GetComponent<Rigidbody>();
+            weaponParentOrigin = weaponParent.localPosition;
         }
 
         private void Update()
@@ -51,6 +57,27 @@ namespace Com.Nudi.Fpsproject
             {
                 rig.AddForce(Vector3.up * jumpForce);
             }
+
+            // headbob
+            if (t_hmove == 0 && t_vmove == 0) 
+            { 
+                HeadBob(idleCounter, 0.025f, 0.025f); 
+                idleCounter += Time.deltaTime;
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
+            }
+            else if(!isSprinting)
+            { 
+                HeadBob(movementCounter, 0.035f, 0.035f); 
+                movementCounter += Time.deltaTime * 3f; 
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
+            }
+            else
+            {
+                HeadBob(movementCounter, 0.15f, 0.075f); 
+                movementCounter += Time.deltaTime * 7f; 
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
+            }
+            
         }
 
         // Update is called once per frame
@@ -98,6 +125,13 @@ namespace Com.Nudi.Fpsproject
         #endregion
 
         #region Private methods
+
+        void HeadBob(float z, float x_intensity, float y_intensity)
+        {
+            targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(z) * x_intensity, Mathf.Sin(z * 2) * y_intensity, weaponParentOrigin.z);
+
+
+        }
 
         #endregion
     }
