@@ -10,7 +10,9 @@ namespace Com.Nudi.Fpsproject
         #region Variables
         public string name;
         public float firerate;
+        public float aimSpeed;
         public GameObject prefab;
+        
         #endregion
     }
 }

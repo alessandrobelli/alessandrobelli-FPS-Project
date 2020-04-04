@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Pistol
   firerate: 9000
+  aimSpeed: 7
   prefab: {fileID: 8583285318775621971, guid: 8d3cbdf129fa17a4db77e0f98056869d, type: 3}
