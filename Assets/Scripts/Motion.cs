@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Com.Nudi.Fpsproject
 {
+    // if(!photonView.IsMine) return; check if the player I'm trying to move is my player.
 
-    public class Motion : MonoBehaviour
+    public class Motion : MonoBehaviourPunCallbacks
     {
 
         #region Variables
@@ -37,6 +39,7 @@ namespace Com.Nudi.Fpsproject
 
         private void Update()
         {
+            if(!photonView.IsMine) return;
 
             // get input
             float t_vmove = Input.GetAxisRaw("Vertical");
@@ -83,6 +86,7 @@ namespace Com.Nudi.Fpsproject
         // Update is called once per frame
         void FixedUpdate()
         {
+            if(!photonView.IsMine) return;
             // get input
             float t_vmove = Input.GetAxisRaw("Vertical");
             float t_hmove = Input.GetAxisRaw("Horizontal");

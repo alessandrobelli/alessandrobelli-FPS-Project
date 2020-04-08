@@ -58,6 +58,7 @@
      <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
      <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
      <Compile Include="Assets\Scripts\Look.cs" />
+     <Compile Include="Assets\Scripts\Manager.cs" />
      <Compile Include="Assets\Scripts\Menu.cs" />
      <Compile Include="Assets\Scripts\Motion.cs" />
      <Compile Include="Assets\Scripts\Scriptable Objects Generators\Gun.cs" />
@@ -608,9 +609,29 @@
       <Project>{4e0f90d5-5e5e-8ef4-117f-392def636f49}</Project>
       <Name>Unity.Timeline.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
+      <Project>{31003e37-bd6e-d1bd-6082-eae153e35fee}</Project>
+      <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
+      <Project>{b2b8be0d-6972-d49c-f89f-e6398cbe5187}</Project>
+      <Name>PunDemos.DemoHubEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
+      <Project>{7e093223-3395-9b58-50f4-6c881c343e9b}</Project>
+      <Name>PunDemos.DemoSlotcarEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.VSCode.Editor.csproj">
       <Project>{e8316fe4-984e-afa3-035e-5671e515c6d2}</Project>
       <Name>Unity.VSCode.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
+      <Project>{fd070e9e-7281-ea27-3f87-594e4ab3f192}</Project>
+      <Name>PhotonUnityNetworking.Demos</Name>
+    </ProjectReference>
+    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
+      <Project>{095855b3-5a88-0883-b036-5cf91306de69}</Project>
+      <Name>PhotonUnityNetworking.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.TextMeshPro.Editor.csproj">
       <Project>{7c874d68-fc14-9f05-e074-240cd01a8e24}</Project>
@@ -624,49 +645,21 @@
       <Project>{71cf24f2-05d6-21df-f350-73ab1b47cc4f}</Project>
       <Name>Unity.Timeline</Name>
     </ProjectReference>
-    <ProjectReference Include="Unity.CollabProxy.Editor.csproj">
-      <Project>{7456913c-dc0a-e7de-b57e-7feb789b76cc}</Project>
-      <Name>Unity.CollabProxy.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.Rider.Editor.csproj">
-      <Project>{6f3fc2c2-50e7-e490-f1c6-0cb7f7b8601e}</Project>
-      <Name>Unity.Rider.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.TextMeshPro.csproj">
-      <Project>{0669d67d-1c1d-b38c-6e9d-37fc68ac0b7a}</Project>
-      <Name>Unity.TextMeshPro</Name>
-    </ProjectReference>
-    <ProjectReference Include="UnityEditor.UI.csproj">
-      <Project>{01aeefe3-29ca-ce2d-d09f-2863b26fe86b}</Project>
-      <Name>UnityEditor.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
-      <Project>{31003e37-bd6e-d1bd-6082-eae153e35fee}</Project>
-      <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
-      <Project>{b2b8be0d-6972-d49c-f89f-e6398cbe5187}</Project>
-      <Name>PunDemos.DemoHubEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
-      <Project>{7e093223-3395-9b58-50f4-6c881c343e9b}</Project>
-      <Name>PunDemos.DemoSlotcarEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
-      <Project>{fd070e9e-7281-ea27-3f87-594e4ab3f192}</Project>
-      <Name>PhotonUnityNetworking.Demos</Name>
-    </ProjectReference>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{095855b3-5a88-0883-b036-5cf91306de69}</Project>
-      <Name>PhotonUnityNetworking.Utilities</Name>
-    </ProjectReference>
     <ProjectReference Include="PhotonWebSocket.csproj">
       <Project>{c3349406-b068-55b6-50e1-bc2a96fd63b3}</Project>
       <Name>PhotonWebSocket</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.CollabProxy.Editor.csproj">
+      <Project>{7456913c-dc0a-e7de-b57e-7feb789b76cc}</Project>
+      <Name>Unity.CollabProxy.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="PhotonRealtime.csproj">
       <Project>{0a0f56d6-f2ba-e4dd-25a4-55ace2bb1ea7}</Project>
       <Name>PhotonRealtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Rider.Editor.csproj">
+      <Project>{6f3fc2c2-50e7-e490-f1c6-0cb7f7b8601e}</Project>
+      <Name>Unity.Rider.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.csproj">
       <Project>{b95a6f0f-7e70-afc6-3780-25b6f2accb12}</Project>
@@ -676,6 +669,10 @@
       <Project>{cc80c8d7-3650-3dc5-e89c-148dc7825233}</Project>
       <Name>PhotonChat</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.TextMeshPro.csproj">
+      <Project>{0669d67d-1c1d-b38c-6e9d-37fc68ac0b7a}</Project>
+      <Name>Unity.TextMeshPro</Name>
+    </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
       <Project>{b8fee369-68ee-6737-9d3b-69e366c5afb4}</Project>
       <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
@@ -683,6 +680,10 @@
     <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
       <Project>{02bd24db-d560-0908-2bf6-2a4b61a723f8}</Project>
       <Name>PhotonUnityNetworking.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityEditor.UI.csproj">
+      <Project>{01aeefe3-29ca-ce2d-d09f-2863b26fe86b}</Project>
+      <Name>UnityEditor.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
