@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Photon.Pun;
 
 namespace Com.Nudi.Fpsproject
 {
-    public class Look : MonoBehaviour
+    public class Look : MonoBehaviourPunCallbacks
     {
         #region Variables
 
@@ -35,6 +35,7 @@ namespace Com.Nudi.Fpsproject
         // Update is called once per frame
         void Update()
         {
+            if(!photonView.IsMine) return;
             SetY();
             SetX();
             UpdateCursorLock();
