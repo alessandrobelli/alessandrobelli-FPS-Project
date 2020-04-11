@@ -29,6 +29,7 @@ namespace Com.Nudi.Fpsproject
         private float sprintFOVModifier = 1.5f;
 
         private int current_health;
+        private Manager manager;
 
         #endregion
 
@@ -36,7 +37,7 @@ namespace Com.Nudi.Fpsproject
         private void Start()
         {
             current_health = max_health;
-
+            manager = GameObject.Find("Manager").GetComponent<Manager>();
             cameraParent.SetActive(photonView.IsMine);
 
             if (!photonView.IsMine) gameObject.layer = 11;
@@ -66,6 +67,8 @@ namespace Com.Nudi.Fpsproject
             bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
             bool isJumping = jump && isGrounded;
             bool isSprinting = sprint && notMovingBackwards && !isJumping && isGrounded;
+
+            if (Input.GetKeyDown(KeyCode.U)) TakeDamage(500);
 
             // jump
             if (isJumping)
@@ -120,6 +123,7 @@ namespace Com.Nudi.Fpsproject
 
 
 
+
             // FOV
             if (isSprinting)
             {
@@ -162,6 +166,8 @@ namespace Com.Nudi.Fpsproject
 
                 if (current_health <= 0)
                 {
+                    manager.Spawn();
+                    PhotonNetwork.Destroy(gameObject);
                     Debug.Log("You Died");
                 }
             }
