@@ -68,7 +68,7 @@ namespace Com.Nudi.Fpsproject
             // 0,0,0 in the parent
             t_newWeapon.transform.localPosition = Vector3.zero;
             t_newWeapon.transform.localEulerAngles = Vector3.zero;
-            t_newWeapon.GetComponent<Sway>().enabled = photonView.IsMine;
+            t_newWeapon.GetComponent<Sway>().isMine = photonView.IsMine;
 
             currentWeapon = t_newWeapon;
 
@@ -104,6 +104,10 @@ namespace Com.Nudi.Fpsproject
             t_bloom -= t_spawn.position;
             t_bloom.Normalize();
 
+
+            // cooldown
+            currentCooldown = loadout[currentWeaponEquipped].firerate;
+
             // raycast 
             RaycastHit t_hit = new RaycastHit();
 
@@ -118,7 +122,8 @@ namespace Com.Nudi.Fpsproject
                     bool youShootAnotherPlayer = t_hit.collider.gameObject.layer == OTHERPLAYERS;
                     if (youShootAnotherPlayer)
                     {
-                        // RPC  damage player
+                        PhotonView Enemy = t_hit.collider.gameObject.GetPhotonView();
+                        Enemy.RPC("TakeDamage", RpcTarget.All, loadout[currentWeaponEquipped].damage);
                     }
                 }
 
@@ -128,10 +133,16 @@ namespace Com.Nudi.Fpsproject
             currentWeapon.transform.Rotate(-loadout[currentWeaponEquipped].recoil, 0, 0);
             currentWeapon.transform.position -= currentWeapon.transform.forward * loadout[currentWeaponEquipped].kickback;
 
-            // cooldown
-            currentCooldown = loadout[currentWeaponEquipped].firerate;
+
 
         }
+
+        [PunRPC]
+        private void TakeDamage(int p_damage)
+        {
+            GetComponent<Motion>().TakeDamage(p_damage);
+        }
+
         #endregion
     }
 }

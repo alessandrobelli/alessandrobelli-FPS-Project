@@ -13,6 +13,8 @@ namespace Com.Nudi.Fpsproject
         #region Variables
         public float speed;
         public float sprintModifier;
+        public float jumpForce;
+        public int max_health;
         public Camera normalCam;
         public GameObject cameraParent;
         public Transform weaponParent;
@@ -25,16 +27,19 @@ namespace Com.Nudi.Fpsproject
         private Vector3 weaponParentOrigin;
         private float baseFOV;
         private float sprintFOVModifier = 1.5f;
-        public float jumpForce;
+
+        private int current_health;
 
         #endregion
 
         #region Monobehavior callbacks
         private void Start()
         {
+            current_health = max_health;
+
             cameraParent.SetActive(photonView.IsMine);
 
-            if (!photonView.IsMine)gameObject.layer = 11;
+            if (!photonView.IsMine) gameObject.layer = 11;
 
 
             baseFOV = normalCam.fieldOfView;
@@ -142,6 +147,24 @@ namespace Com.Nudi.Fpsproject
             targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(z) * x_intensity, Mathf.Sin(z * 2) * y_intensity, weaponParentOrigin.z);
 
 
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void TakeDamage(int p_damage)
+        {
+            if (photonView.IsMine)
+            {
+                current_health -= p_damage;
+                Debug.Log(current_health);
+
+                if (current_health <= 0)
+                {
+                    Debug.Log("You Died");
+                }
+            }
         }
 
         #endregion

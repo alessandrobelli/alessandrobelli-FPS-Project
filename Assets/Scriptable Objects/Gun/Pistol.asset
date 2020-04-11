@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   name: Pistol
+  damage: 200
   firerate: 0.7
   aimSpeed: 7
   bloom: 20

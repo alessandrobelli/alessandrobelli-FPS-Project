@@ -358,6 +358,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 400
   sprintModifier: 2
+  jumpForce: 1000
+  max_health: 1000
   normalCam: {fileID: 7644965551475320312}
   cameraParent: {fileID: 7644965551377328833}
   weaponParent: {fileID: 7644965551996249980}
@@ -365,7 +367,6 @@ MonoBehaviour:
   ground:
     serializedVersion: 2
     m_Bits: 256
-  jumpForce: 1000
 --- !u!114 &7644965551659988800
 MonoBehaviour:
   m_ObjectHideFlags: 0
