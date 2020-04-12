@@ -60,7 +60,7 @@
      <Compile Include="Assets\Scripts\Look.cs" />
      <Compile Include="Assets\Scripts\Manager.cs" />
      <Compile Include="Assets\Scripts\Menu.cs" />
-     <Compile Include="Assets\Scripts\Motion.cs" />
+     <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Scriptable Objects Generators\Gun.cs" />
      <Compile Include="Assets\Scripts\Sway.cs" />
      <Compile Include="Assets\Scripts\Weapon.cs" />
@@ -684,6 +684,14 @@
     <ProjectReference Include="UnityEditor.UI.csproj">
       <Project>{01aeefe3-29ca-ce2d-d09f-2863b26fe86b}</Project>
       <Name>UnityEditor.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Postprocessing.Editor.csproj">
+      <Project>{de200c09-c791-d3b1-7ee2-98d23516cad9}</Project>
+      <Name>Unity.Postprocessing.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Postprocessing.Runtime.csproj">
+      <Project>{f8ed6a37-bf0f-45b5-4472-3ef5a1aae1f7}</Project>
+      <Name>Unity.Postprocessing.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
