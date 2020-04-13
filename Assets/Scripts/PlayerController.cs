@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.UI;
 
 namespace Com.Nudi.Fpsproject
 {
@@ -30,7 +31,10 @@ namespace Com.Nudi.Fpsproject
 
         private int current_health;
         private Manager manager;
-        private Transform UI_healthbar;
+        private Weapon weapon;
+        private Transform ui_healthbar;
+        private UnityEngine.UI.Text ui_ammo;
+
 
         #endregion
 
@@ -39,6 +43,7 @@ namespace Com.Nudi.Fpsproject
         {
             current_health = max_health;
             manager = GameObject.Find("Manager").GetComponent<Manager>();
+            weapon = GetComponent<Weapon>();
 
             cameraParent.SetActive(photonView.IsMine);
 
@@ -53,8 +58,11 @@ namespace Com.Nudi.Fpsproject
 
             if (photonView.IsMine)
             {
-                UI_healthbar = GameObject.Find("HUD/Health/Bar").transform;
+
+                ui_healthbar = GameObject.Find("HUD/Health/Bar").transform;
+                ui_ammo = GameObject.Find("HUD/Ammo/Text").GetComponent<Text>();
                 RefreshHealthBar();
+                weapon.RefreshAmmo(ui_ammo);
             }
         }
 
@@ -99,13 +107,14 @@ namespace Com.Nudi.Fpsproject
             }
             else
             {
-                HeadBob(movementCounter, 0.15f, 0.075f);
+                HeadBob(movementCounter, 0.12f, 0.060f);
                 movementCounter += Time.deltaTime * 7f;
                 weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
             }
 
             // UI Refreshes
             RefreshHealthBar();
+            weapon.RefreshAmmo(ui_ammo);
 
         }
 
@@ -159,16 +168,14 @@ namespace Com.Nudi.Fpsproject
 
         void HeadBob(float z, float x_intensity, float y_intensity)
         {
-            targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(z) * x_intensity, Mathf.Sin(z * 2) * y_intensity, weaponParentOrigin.z);
-
-
+            if(!Input.GetMouseButton(1)) targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(z) * x_intensity, Mathf.Sin(z * 2) * y_intensity, weaponParentOrigin.z);
         }
 
         private void RefreshHealthBar()
         {
 
             float t_health_ratio = (float)current_health / (float)max_health;
-            UI_healthbar.localScale = Vector3.Lerp(UI_healthbar.localScale, new Vector3(t_health_ratio, 1, 1), Time.deltaTime * 6f);
+            ui_healthbar.localScale = Vector3.Lerp(ui_healthbar.localScale, new Vector3(t_health_ratio, 1, 1), Time.deltaTime * 6f);
 
         }
 

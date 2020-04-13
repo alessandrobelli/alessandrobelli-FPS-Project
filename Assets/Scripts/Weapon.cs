@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 namespace Com.Nudi.Fpsproject
@@ -16,13 +17,18 @@ namespace Com.Nudi.Fpsproject
         private int currentWeaponEquipped;
         private float currentCooldown;
         private int OTHERPLAYERS = 11;
+        private bool isReloading = false;
         #endregion
 
         #region Monobehavior callbacks
         // Start is called before the first frame update
         void Start()
         {
-
+            foreach (Gun g in loadout) g.Init();
+            if (photonView.IsMine)
+            {
+                photonView.RPC("Equip", RpcTarget.All, 0);
+            }
         }
 
         // Update is called once per frame
@@ -42,7 +48,13 @@ namespace Com.Nudi.Fpsproject
                 {
                     Aim(Input.GetMouseButton(1));
 
-                    if (Input.GetMouseButtonDown(0) && currentCooldown <= 0f) photonView.RPC("Shoot", RpcTarget.All);
+                    if (Input.GetMouseButtonDown(0) && currentCooldown <= 0f)
+                    {
+                        if (loadout[currentWeaponEquipped].CanFireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                        else StartCoroutine(Reload(loadout[currentWeaponEquipped].reloadTime));
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload(loadout[currentWeaponEquipped].reloadTime));
 
                     // cooldown
                     if (currentCooldown > 0) currentCooldown -= Time.deltaTime;
@@ -58,12 +70,46 @@ namespace Com.Nudi.Fpsproject
         #endregion
 
 
+        #region Public methods
+
+        public void RefreshAmmo(Text p_text)
+        {
+            int t_clip = loadout[currentWeaponEquipped].GetClip();
+            int t_stache = loadout[currentWeaponEquipped].GetAmmo();
+
+            p_text.text = t_clip.ToString("D2") + " / " + t_stache.ToString("D2");
+
+        }
+
+        #endregion
+
         #region Private methods
+
+        IEnumerator Reload(float p_wait)
+        {
+            
+            isReloading = true;
+
+            currentWeapon.SetActive(false);
+
+            yield return new WaitForSeconds(p_wait);
+
+            loadout[currentWeaponEquipped].Reload();
+            currentWeapon.SetActive(true);
+
+            isReloading = false;
+
+        }
+
 
         [PunRPC]
         void Equip(int p_ind)
         {
-            if (currentWeapon != null) Destroy(currentWeapon);
+            if (currentWeapon != null)
+            {
+                if (isReloading) StopCoroutine("Reload");
+                Destroy(currentWeapon);
+            }
 
             currentWeaponEquipped = p_ind;
 
