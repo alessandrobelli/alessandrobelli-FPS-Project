@@ -48,7 +48,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7644965551465824541
 Transform:
   m_ObjectHideFlags: 0
@@ -436,6 +436,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 400
+  slideModifier: 2.5
+  lengthOfSlide: 2
   sprintModifier: 2
   jumpForce: 1000
   max_health: 1000
