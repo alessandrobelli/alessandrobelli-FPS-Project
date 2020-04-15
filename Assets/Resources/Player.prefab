@@ -439,7 +439,7 @@ MonoBehaviour:
   slideModifier: 2.5
   lengthOfSlide: 2
   sprintModifier: 2
-  jumpForce: 1000
+  jumpForce: 500
   max_health: 1000
   normalCam: {fileID: 7644965551475320312}
   cameraParent: {fileID: 7644965551377328833}
@@ -480,6 +480,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadout:
   - {fileID: 11400000, guid: e3cc46fd2f4b9cc408eec98079c1a3b7, type: 2}
+  - {fileID: 11400000, guid: d3bb81f646e254a4ea09e749692a5c45, type: 2}
   weaponParent: {fileID: 7644965551996249980}
   bulletHolePrefab: {fileID: 4174572135464514450, guid: bca0358db5537604692160b48688a957,
     type: 3}

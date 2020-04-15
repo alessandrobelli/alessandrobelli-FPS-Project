@@ -5,6 +5,12 @@ using Photon.Pun;
 
 namespace Com.Nudi.Fpsproject
 {
+    public enum burst
+    {
+        Semi = 0,
+        Auto = 1,
+        Burst = 2
+    };
     public class Manager : MonoBehaviour
     {
         public string player_prefab;

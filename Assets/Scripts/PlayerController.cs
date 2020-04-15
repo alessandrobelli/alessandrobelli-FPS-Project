@@ -23,7 +23,7 @@ namespace Com.Nudi.Fpsproject
         public Transform weaponParent;
         public Transform groundDetector;
         public LayerMask ground;
- 
+
 
         private Rigidbody rig;
         private float movementCounter;
@@ -102,26 +102,33 @@ namespace Com.Nudi.Fpsproject
             }
 
             // headbob
-            if (!sliding) 
+            if (sliding)
             {
-                if (t_hmove == 0 && t_vmove == 0)
-                {
-                    HeadBob(idleCounter, 0.025f, 0.025f);
-                    idleCounter += Time.deltaTime;
-                    weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
-                }
-                else if (!isSprinting)
-                {
-                    HeadBob(movementCounter, 0.035f, 0.035f);
-                    movementCounter += Time.deltaTime * 3f;
-                    weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
-                }
-                else
-                {
-                    HeadBob(movementCounter, 0.12f, 0.060f);
-                    movementCounter += Time.deltaTime * 7f;
-                    weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
-                }
+                HeadBob(movementCounter, 0.15f, 0.070f);
+                movementCounter += Time.deltaTime * 7f;
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
+
+            }
+            else if (t_hmove == 0 && t_vmove == 0)
+            {
+                // idle
+                HeadBob(idleCounter, 0.025f, 0.025f);
+                idleCounter += Time.deltaTime;
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
+            }
+            else if (!isSprinting)
+            {
+                // walking
+                HeadBob(movementCounter, 0.035f, 0.035f);
+                movementCounter += Time.deltaTime * 3f;
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
+            }
+            else
+            {
+                // sprinting 
+                HeadBob(movementCounter, 0.15f, 0.070f);
+                movementCounter += Time.deltaTime * 7f;
+                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
             }
 
             // UI Refreshes
@@ -165,7 +172,7 @@ namespace Com.Nudi.Fpsproject
             }
             else
             {
-                 t_direction = slide_dir;
+                t_direction = slide_dir;
                 t_adjustedSpeed *= slideModifier;
 
                 slide_time -= Time.fixedDeltaTime;

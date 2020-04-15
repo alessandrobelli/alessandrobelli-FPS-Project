@@ -17,9 +17,10 @@ MonoBehaviour:
   ammo: 20
   clipSize: 5
   reloadTime: 1
+  burst: 0
   firerate: 0.7
   aimSpeed: 7
-  bloom: 20
-  recoil: 10
-  kickback: 0.15
+  bloom: 5
+  recoil: 2
+  kickback: 0.05
   prefab: {fileID: 8583285318775621971, guid: 8d3cbdf129fa17a4db77e0f98056869d, type: 3}

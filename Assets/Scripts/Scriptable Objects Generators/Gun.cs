@@ -13,7 +13,8 @@ namespace Com.Nudi.Fpsproject
         public int ammo;
         public int clipSize;
         public float reloadTime;
-
+        public burst fireType;
+        // 0 semi | 1 auto | 2+ burst fire
         public float firerate;
         public float aimSpeed;
         public float bloom;
@@ -26,7 +27,6 @@ namespace Com.Nudi.Fpsproject
         #endregion
 
         #region Private Methods
-
 
         public void Init()
         {

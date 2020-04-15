@@ -42,16 +42,33 @@ namespace Com.Nudi.Fpsproject
                 photonView.RPC("Equip", RpcTarget.All, 0);
             }
 
+            if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                photonView.RPC("Equip", RpcTarget.All, 1);
+            }
+
             if (currentWeapon != null)
             {
                 if (photonView.IsMine)
                 {
                     Aim(Input.GetMouseButton(1));
 
-                    if (Input.GetMouseButtonDown(0) && currentCooldown <= 0f)
+                    if (loadout[currentWeaponEquipped].fireType != burst.Auto)
                     {
-                        if (loadout[currentWeaponEquipped].CanFireBullet()) photonView.RPC("Shoot", RpcTarget.All);
-                        else StartCoroutine(Reload(loadout[currentWeaponEquipped].reloadTime));
+                        if (Input.GetMouseButtonDown(0) && currentCooldown <= 0f)
+                        {
+                            if (loadout[currentWeaponEquipped].CanFireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                            else StartCoroutine(Reload(loadout[currentWeaponEquipped].reloadTime));
+                        }
+
+                    }
+                    else
+                    {
+                        if (Input.GetMouseButton(0) && currentCooldown <= 0f)
+                        {
+                            if (loadout[currentWeaponEquipped].CanFireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                            else StartCoroutine(Reload(loadout[currentWeaponEquipped].reloadTime));
+                        }
                     }
 
                     if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload(loadout[currentWeaponEquipped].reloadTime));
@@ -87,7 +104,7 @@ namespace Com.Nudi.Fpsproject
 
         IEnumerator Reload(float p_wait)
         {
-            
+
             isReloading = true;
 
             currentWeapon.SetActive(false);
