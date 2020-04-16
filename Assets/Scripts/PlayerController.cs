@@ -23,6 +23,12 @@ namespace Com.Nudi.Fpsproject
         public Transform weaponParent;
         public Transform groundDetector;
         public LayerMask ground;
+        public float crouchModifier;
+
+        public float slideAmount;
+        public float crouchAmount;
+        public GameObject standingCollider;
+        public GameObject crouchingCollider;
 
 
         private Rigidbody rig;
@@ -42,15 +48,30 @@ namespace Com.Nudi.Fpsproject
         private Vector3 slide_dir;
         private Vector3 normalCameraOrigin;
         private Vector3 weaponParentCurrentPosition;
+        private bool crouched;
 
         #endregion
 
         #region Monobehavior callbacks
+
+        private void ChangeLayerRecursively(Transform p_trans, int p_layer)
+        {
+            p_trans.gameObject.layer = p_layer;
+            foreach (Transform t in p_trans) ChangeLayerRecursively(t, p_layer);
+        }
         private void Start()
         {
             current_health = max_health;
             manager = GameObject.Find("Manager").GetComponent<Manager>();
             weapon = GetComponent<Weapon>();
+
+            if (!photonView.IsMine)
+            {
+                gameObject.layer = 11;
+                standingCollider.layer = 11;
+                crouchingCollider.layer = 11;
+                //ChangeLayerRecursively(mesh.transform, 11);
+            }
 
             cameraParent.SetActive(photonView.IsMine);
 
@@ -78,58 +99,26 @@ namespace Com.Nudi.Fpsproject
         private void Update()
         {
             if (!photonView.IsMine) return;
-
-            // get input
-            float t_vmove = Input.GetAxisRaw("Vertical");
-            float t_hmove = Input.GetAxisRaw("Horizontal");
-
-            // control
-            bool jump = Input.GetKeyDown(KeyCode.Space);
-            bool sprint = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            bool notMovingBackwards = t_vmove > 0;
-
-            // states
-            bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
-            bool isJumping = jump && isGrounded;
-            bool isSprinting = sprint && notMovingBackwards && !isJumping && isGrounded;
+            float t_vmove, t_hmove;
+            bool isJumping, isSprinting, isCrouching;
+            UpdateVarInit(out t_vmove, out t_hmove, out isJumping, out isSprinting, out isCrouching);
 
             if (Input.GetKeyDown(KeyCode.U)) TakeDamage(100);
+
+            if (isCrouching)
+            {
+                photonView.RPC("SetCrouch", RpcTarget.All, !crouched);
+            }
+
 
             // jump
             if (isJumping)
             {
+                if (crouched) photonView.RPC("SetCrouch", RpcTarget.All, false);
                 rig.AddForce(Vector3.up * jumpForce);
             }
 
-            // headbob
-            if (sliding)
-            {
-                HeadBob(movementCounter, 0.15f, 0.070f);
-                movementCounter += Time.deltaTime * 7f;
-                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
-
-            }
-            else if (t_hmove == 0 && t_vmove == 0)
-            {
-                // idle
-                HeadBob(idleCounter, 0.025f, 0.025f);
-                idleCounter += Time.deltaTime;
-                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
-            }
-            else if (!isSprinting)
-            {
-                // walking
-                HeadBob(movementCounter, 0.035f, 0.035f);
-                movementCounter += Time.deltaTime * 3f;
-                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
-            }
-            else
-            {
-                // sprinting 
-                HeadBob(movementCounter, 0.15f, 0.070f);
-                movementCounter += Time.deltaTime * 7f;
-                weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
-            }
+            Headbob(t_vmove, t_hmove, isSprinting);
 
             // UI Refreshes
             RefreshHealthBar();
@@ -137,37 +126,36 @@ namespace Com.Nudi.Fpsproject
 
         }
 
+
+
         // Update is called once per frame
         void FixedUpdate()
         {
             if (!photonView.IsMine) return;
-            // get input
-            float t_vmove = Input.GetAxisRaw("Vertical");
-            float t_hmove = Input.GetAxisRaw("Horizontal");
 
-            // control
-            float t_adjustedSpeed = speed;
-            bool jumpButtonPressed = Input.GetKeyDown(KeyCode.Space);
-            bool sprintButtonPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            bool notMovingBackwards = t_vmove > 0;
-            bool slideButtonPressed = Input.GetKey(KeyCode.C);
-
-            // #states
-            bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
-            bool isJumping = jumpButtonPressed && isGrounded;
-            bool isSprinting = sprintButtonPressed && notMovingBackwards && !isJumping && isGrounded;
-            bool isSliding = isSprinting && slideButtonPressed && !sliding;
+            float t_vmove, t_hmove, t_adjustedSpeed;
+            bool isSprinting, isSliding;
+            Vector3 t_direction;
+            FixedUpdateVarInit(out t_vmove, out t_hmove, out t_adjustedSpeed, out isSprinting, out isSliding, out t_direction);
 
 
-            // movement
-            Vector3 t_direction = Vector3.zero;
+
+
             if (!sliding)
             {
                 t_direction = new Vector3(t_hmove, 0, t_vmove);
                 t_direction.Normalize();
-
-                t_adjustedSpeed *= sprintModifier;
                 t_direction = transform.TransformDirection(t_direction);
+
+                if (isSprinting)
+                {
+                    if (crouched) photonView.RPC("SetCrouch", RpcTarget.All, false);
+                    t_adjustedSpeed *= sprintModifier;
+                }
+                else if (crouched)
+                {
+                    t_adjustedSpeed *= crouchModifier;
+                }
 
             }
             else
@@ -179,7 +167,7 @@ namespace Com.Nudi.Fpsproject
                 if (slide_time <= 0)
                 {
                     sliding = false;
-                    weaponParentCurrentPosition += Vector3.up * 0.5f;
+                    weaponParentCurrentPosition -= Vector3.down * (slideAmount - crouchAmount);
                 }
             }
 
@@ -195,15 +183,16 @@ namespace Com.Nudi.Fpsproject
                 sliding = true;
                 slide_dir = t_direction;
                 slide_time = lengthOfSlide;
-                weaponParentCurrentPosition += Vector3.down * 0.5f;
-                // adjust camera
+                weaponParentCurrentPosition += Vector3.down * (slideAmount - crouchAmount);
+                if (!crouched) photonView.RPC("SetCrouch", RpcTarget.All, true);
+
             }
 
             // Camera Stuff
             if (sliding)
             {
-                normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * sprintFOVModifier * 1.25f, Time.deltaTime * 8f);
-                normalCam.transform.localPosition = Vector3.Lerp(normalCam.transform.localPosition, normalCameraOrigin + Vector3.down * 0.5f, Time.deltaTime * 6f);
+                normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * sprintFOVModifier * 1.15f, Time.deltaTime * 8f);
+                normalCam.transform.localPosition = Vector3.MoveTowards(normalCam.transform.localPosition, normalCameraOrigin + Vector3.down * slideAmount, Time.deltaTime);
             }
             else
             {
@@ -218,18 +207,133 @@ namespace Com.Nudi.Fpsproject
 
                 }
 
-                normalCam.transform.localPosition = Vector3.Lerp(normalCam.transform.localPosition, normalCameraOrigin, Time.deltaTime * 6f);
+                if (crouched)
+                {
+                    normalCam.transform.localPosition = Vector3.MoveTowards(normalCam.transform.localPosition, normalCameraOrigin + Vector3.down * crouchAmount, Time.deltaTime * 6f);
+                }
+                else
+                {
+                    normalCam.transform.localPosition = Vector3.MoveTowards(normalCam.transform.localPosition, normalCameraOrigin, Time.deltaTime * 6f);
+                }
+
+
             }
 
 
 
 
         }
+
         #endregion
 
         #region Private methods
 
-        void HeadBob(float z, float x_intensity, float y_intensity)
+        [PunRPC]
+        void SetCrouch(bool p_state)
+        {
+            if (crouched == p_state) return;
+
+            crouched = p_state;
+
+            if (crouched)
+            {
+                standingCollider.SetActive(false);
+                crouchingCollider.SetActive(true);
+                weaponParentCurrentPosition += Vector3.down * crouchAmount;
+            }
+            else
+            {
+                standingCollider.SetActive(true);
+                crouchingCollider.SetActive(false);
+                weaponParentCurrentPosition -= Vector3.down * crouchAmount;
+            }
+        }
+
+        private void Headbob(float t_vmove, float t_hmove, bool isSprinting)
+        {
+            // headbob
+            if (sliding)
+            {
+                SetHeadBob(movementCounter, 0.15f, 0.070f);
+                movementCounter += Time.deltaTime * 7f;
+                weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
+
+            }
+            else if (t_hmove == 0 && t_vmove == 0)
+            {
+                // idle
+                SetHeadBob(idleCounter, 0.025f, 0.025f);
+                idleCounter += Time.deltaTime;
+                weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
+            }
+            else if (!isSprinting && !crouched)
+            {
+                // walking
+                SetHeadBob(movementCounter, 0.035f, 0.035f);
+                movementCounter += Time.deltaTime * 3f;
+                weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
+            }
+            else if (crouched)
+            {
+                // crouching
+                SetHeadBob(movementCounter, 0.02f, 0.02f);
+                movementCounter += Time.deltaTime * 4f;
+                weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
+
+            }
+            else
+            {
+                // sprinting 
+                SetHeadBob(movementCounter, 0.15f, 0.070f);
+                movementCounter += Time.deltaTime * 7f;
+                weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
+            }
+        }
+        private void FixedUpdateVarInit(out float t_vmove, out float t_hmove, out float t_adjustedSpeed, out bool isSprinting, out bool isSliding, out Vector3 t_direction)
+        {
+            // get input
+            t_vmove = Input.GetAxisRaw("Vertical");
+            t_hmove = Input.GetAxisRaw("Horizontal");
+
+            // control
+            t_adjustedSpeed = speed;
+            bool jumpButtonPressed = Input.GetKeyDown(KeyCode.Space);
+            bool sprintButtonPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            bool notMovingBackwards = t_vmove > 0;
+            bool slideButtonPressed = Input.GetKey(KeyCode.C);
+
+            // #states
+            bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+            bool isJumping = jumpButtonPressed && isGrounded;
+            isSprinting = sprintButtonPressed && notMovingBackwards && !isJumping && isGrounded;
+            isSliding = isSprinting && slideButtonPressed && !sliding;
+
+
+            // movement
+            t_direction = Vector3.zero;
+        }
+
+        private void UpdateVarInit(out float t_vmove, out float t_hmove, out bool isJumping, out bool isSprinting, out bool isCrouching)
+        {
+
+            // get input
+            t_vmove = Input.GetAxisRaw("Vertical");
+            t_hmove = Input.GetAxisRaw("Horizontal");
+
+            // control
+            bool jump = Input.GetKeyDown(KeyCode.Space);
+            bool sprint = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            bool notMovingBackwards = t_vmove > 0;
+            bool crouch = Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
+
+            // states
+            bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.15f, ground);
+            isJumping = jump && isGrounded;
+            isSprinting = sprint && notMovingBackwards && !isJumping && isGrounded;
+            isCrouching = crouch && !isSprinting && !isJumping && isGrounded;
+        }
+
+        void SetHeadBob(float z, float x_intensity, float y_intensity)
         {
             if (!Input.GetMouseButton(1)) targetWeaponBobPosition = weaponParentCurrentPosition + new Vector3(Mathf.Cos(z) * x_intensity, Mathf.Sin(z * 2) * y_intensity, weaponParentOrigin.z);
         }

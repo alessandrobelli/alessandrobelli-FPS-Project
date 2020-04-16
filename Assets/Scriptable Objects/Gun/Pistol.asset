@@ -17,8 +17,8 @@ MonoBehaviour:
   ammo: 20
   clipSize: 5
   reloadTime: 1
-  burst: 0
-  firerate: 0.7
+  fireType: 0
+  firerate: 0.55
   aimSpeed: 7
   bloom: 5
   recoil: 2
