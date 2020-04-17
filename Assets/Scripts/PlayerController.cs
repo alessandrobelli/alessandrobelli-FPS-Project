@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
+using System;
 
 namespace Com.Nudi.Fpsproject
 {
     // if(!photonView.IsMine) return; check if the player I'm trying to move is my player.
 
-    public class PlayerController : MonoBehaviourPunCallbacks
+    public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     {
 
         #region Variables
@@ -49,6 +50,7 @@ namespace Com.Nudi.Fpsproject
         private Vector3 normalCameraOrigin;
         private Vector3 weaponParentCurrentPosition;
         private bool crouched;
+        private int aimAngle;
 
         #endregion
 
@@ -98,7 +100,12 @@ namespace Com.Nudi.Fpsproject
 
         private void Update()
         {
-            if (!photonView.IsMine) return;
+            if (!photonView.IsMine)
+            {
+                RefreshMultiplayerState();
+                return;
+            }
+
             float t_vmove, t_hmove;
             bool isJumping, isSprinting, isCrouching;
             UpdateVarInit(out t_vmove, out t_hmove, out isJumping, out isSprinting, out isCrouching);
@@ -124,6 +131,19 @@ namespace Com.Nudi.Fpsproject
             RefreshHealthBar();
             weapon.RefreshAmmo(ui_ammo);
 
+        }
+
+        private void RefreshMultiplayerState()
+        {
+            float cachEulY = weaponParent.localEulerAngles.y;
+
+            Quaternion targetRotation = Quaternion.identity * Quaternion.AngleAxis(aimAngle, Vector3.right);
+            weaponParent.rotation = Quaternion.Slerp(weaponParent.rotation, targetRotation, Time.deltaTime * 8f);
+
+            Vector3 finalRotation = weaponParent.localEulerAngles;
+            finalRotation.y = cachEulY;
+
+            weaponParent.localEulerAngles = finalRotation;
         }
 
 
@@ -365,6 +385,22 @@ namespace Com.Nudi.Fpsproject
                     Debug.Log("You Died");
                 }
             }
+        }
+
+        public void OnPhotonSerializeView(PhotonStream p_stream, PhotonMessageInfo p_message)
+        {
+            if(p_stream.IsWriting)
+            {
+                p_stream.SendNext((int)(weaponParent.transform.localEulerAngles.x * 100));
+            }
+            else
+            {
+                aimAngle = (int)p_stream.ReceiveNext() / 100;
+                
+            }
+
+
+            throw new System.NotImplementedException();
         }
 
         #endregion

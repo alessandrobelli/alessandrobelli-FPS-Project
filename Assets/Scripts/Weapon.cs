@@ -16,7 +16,7 @@ namespace Com.Nudi.Fpsproject
         public LayerMask canBeShot;
         private int currentWeaponEquipped;
         private float currentCooldown;
-        private int OTHERPLAYERS = 11;
+        private int OtherPlayersLevel = 11;
         private bool isReloading = false;
         #endregion
 
@@ -186,10 +186,10 @@ namespace Com.Nudi.Fpsproject
 
                 if (photonView.IsMine)
                 {
-                    bool youShootAnotherPlayer = t_hit.collider.gameObject.layer == OTHERPLAYERS;
+                    bool youShootAnotherPlayer = t_hit.collider.gameObject.layer == OtherPlayersLevel;
                     if (youShootAnotherPlayer)
                     {
-                        PhotonView Enemy = t_hit.collider.gameObject.GetPhotonView();
+                        PhotonView Enemy = t_hit.collider.transform.root.gameObject.GetPhotonView();
                         Enemy.RPC("TakeDamage", RpcTarget.All, loadout[currentWeaponEquipped].damage);
                     }
                 }
